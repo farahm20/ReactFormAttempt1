@@ -1,61 +1,132 @@
 import React from 'react'
 import { useForm } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 
+
+
+const schema = yup.object().shape({
+    firstname: yup.string()
+        .required("First name is required")
+        .matches(/^([^0-9]*)$/, "First name should not contain numbers"),
+    lastname: yup.string()
+        .required("First name is required")
+        .matches(/^([^0-9]*)$/, "Last name should not contain numbers"),
+    email: yup.string()
+        .email("Email should have correct format")
+        .required("Email is a required field"),
+    phoneNumber: yup.string(),
+    userCity: yup.string()
+})
 
 const PersonalInforForm = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const onSubmit = (data) => {
-        console.log(data)
+    // const { setValues, data } = useData();
+    const { register, handleSubmit, formState: { errors }, } = useForm({
+        // defaultValues: {
+        //     firstname: data.firstname,
+        //     lastname: data.lastname,
+        //     email: data.email,
+        //     phoneNumber: data.phoneNumber,
+        // },
+        resolver: yupResolver(schema),
+    });
+
+    const normalizePhoneNumber = (value) => {
+        const phoneNumber = parsePhoneNumberFromString(value)
+        const phoneNumberCountry = phoneNumber.country;
+
+        if (!phoneNumber || phoneNumberCountry !== 'SE') {
+            console.log(phoneNumber)
+            console.log("incorrect phone number.")
+            return value
+        }
+        console.log(phoneNumber)
+        console.log(phoneNumber.number)
+
+        return (
+            // phoneNumber.formatInternational()
+            phoneNumber.formatNational()
+        )
+
     }
 
+    const onSubmit = (data) => {
+        console.log("in submit")
+        console.log(data)
+        console.log(data.phoneNumber)
+        // setValues(data)
+    }
+    const citiesOptions = "Stockhom Göteborg Mälmo/Lund Uppsala Västerås Other".split(' ');
+
     return (
-        <form
-            onSubmit={handleSubmit(onSubmit)}
-        >
-            <label htmlFor="firstname">Let's get started! What's your first name?</label>
-            <input
-                type="text"
-                placeholder="First name"
-                name="firstname"
-                {...register('firstname',
-                    {
-                        required: true,
-                        minLength: 2,
-                        maxLength: 30
-                    })}
-            />
-            <label htmlFor="firstname">And your last name?</label>
-            <input
-                type="text"
-                label="And your last name?"
-                placeholder="Last name"
-                name="lastname"
-                {...register('lastname',
-                    {
-                        required: true,
-                        minLength: 2,
-                        maxLength: 30
-                    })}
-            />
-            {errors.firstname && errors.firstname.type === "required"
-                && <span>Firstname in invalid</span>}
-            {errors.firstname && errors.firstname.type === "maxLength"
-                && <span>Max length exceeded</span>}
-            {errors.firstname && errors.firstname.type === "minLength"
-                && <span>First name should be longer than 1 charachter </span>}
+        <div className="form-control">
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <label className="form-question" htmlFor="firstname">1: Let's get started! What's your first name?</label>
+                <input
+                    type="text"
+                    placeholder="First name"
+                    name="firstname"
+                    {...register('firstname')}
+                />
+                {errors.firstname && <span className="invalid error-text">{errors.firstname.message}</span>}
+                <label className="form-question" htmlFor="firstname">2: And your last name?</label>
+                <input
+                    type="text"
+                    label="And your last name?"
+                    placeholder="Last name"
+                    name="lastname"
+                    {...register('lastname')}
+                />
+                {errors.lastname && <span className="invalid error-text">{errors.lastname.message}</span>}
 
-            {errors.lastname && errors.lastname.type === "required"
-                && <span>Lastname in invalid</span>}
-            {errors.lastname && errors.lastname.type === "maxLength"
-                && <span>Max length exceeded</span>}
-            {errors.lastname && errors.lastname.type === "minLength"
-                && <span>Last name should be longer than 1 charachter </span>}
+                <label className="form-question" htmlFor="firstname">3: Thank for trusting us, test! We are going to help you! What is your email adress? </label>
+                <input
+                    type="email"
+                    placeholder="email"
+                    name="email"
+                    {...register('email')}
+                />
+                {errors.email && <span className="invalid error-text">{errors.email.message}</span>}
 
-            <input
-                type="submit"
-                placeholder="submit"
-            />
-        </form>
+                {/* We now need your telephone numbe */}
+                <label className="form-question" htmlFor="firstname">4: We now need your telephone number. </label>
+                <input
+                    type="tel"
+                    placeholder="070 123 45 67"
+                    name="phoneNumber"
+                    {...register("phoneNumber")}
+                    onChange={(event) => {
+                        event.target.value = normalizePhoneNumber(event.target.value);
+                    }}
+                />
+
+                <label className="form-question" htmlFor="firstname">5: Where do you live? </label>
+
+                {
+                    citiesOptions.map(
+                        (c, i) => <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name={c}
+                                    value={c}
+                                    label={c}
+                                    {...register("userCity")}
+                                />
+                            }
+                            label={c}
+                        />
+                    )
+                }
+
+                <input className="button"
+                    type="submit"
+                    placeholder="submit"
+                />
+            </form>
+        </div>
     );
 }
 
