@@ -2,10 +2,20 @@ import React from 'react'
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { parsePhoneNumberFromString } from 'git log'
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import firebase from './firebase'
 
+
+//adding data to firebase
+// firebase.firestore().collection('UserAnswers').add({
+//     firstname: 'Jane',
+//     lastname: 'Doe',
+//     email: 'jane.doe@email.com',
+//     phoneNumber: '070 123 45 67',
+//     userCity: 'Göteborg',
+// })
 
 
 const schema = yup.object().shape({
@@ -57,8 +67,28 @@ const PersonalInforForm = () => {
         console.log("in submit")
         console.log(data)
         console.log(data.phoneNumber)
+        sendDataToFireBase(data);
         // setValues(data)
     }
+
+    function sendDataToFireBase(data) {
+        console.log("In send data func")
+
+        firebase
+            .firestore()
+            .collection('UserAnswers')
+            .add({
+                firstname: data.firstname,
+                lastname: data.lastname,
+                email: data.email,
+                phoneNumber: data.phoneNumber,
+                userCity: data.userCity,
+            })
+        // .then(() => {
+        //     //set value to enpty string to remove all form values
+        // })
+    }
+    //cities option array
     const citiesOptions = "Stockhom Göteborg Mälmo/Lund Uppsala Västerås Other".split(' ');
 
     return (
@@ -107,16 +137,17 @@ const PersonalInforForm = () => {
 
                 {
                     citiesOptions.map(
-                        (c, i) => <FormControlLabel
+                        (city, index) => <FormControlLabel
+                            key={index}
                             control={
                                 <Checkbox
-                                    name={c}
-                                    value={c}
-                                    label={c}
+                                    name={city}
+                                    value={city}
+                                    label={city}
                                     {...register("userCity")}
                                 />
                             }
-                            label={c}
+                            label={city}
                         />
                     )
                 }

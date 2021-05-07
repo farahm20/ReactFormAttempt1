@@ -1,6 +1,8 @@
-import * as firebase from 'firebase/app';
+
+import firebase from 'firebase/app'
 import 'firebase/storage';
 import 'firebase/firestore';
+//Environment variables
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 var firebaseConfig = {
@@ -14,11 +16,7 @@ var firebaseConfig = {
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-firebase.analytics();
+// firebase.analytics();
 
-//initializing storing service and firestore service
-const projectStorage = firebase.storage(); //this will startup the firebase storage
-const projectFirestore = firebase.firestore(); //this will help us to interact with firestore service
 
-//export
-export { projectStorage, projectFirestore }
+export default firebase
