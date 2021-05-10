@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useData } from './DataContext';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { parsePhoneNumberFromString } from 'git log'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import firebase from './firebase'
+
 
 
 //adding data to firebase
@@ -28,29 +30,34 @@ const schema = yup.object().shape({
     email: yup.string()
         .email("Email should have correct format")
         .required("Email is a required field"),
-    phoneNumber: yup.string(),
+    phoneNumber: yup.string()
+        .required("Phone number is a required field"),
     userCity: yup.string()
 })
 
 const PersonalInforForm = () => {
-    // const { setValues, data } = useData();
+    const { setValues, data } = useData();
+    const [disabled, setDisabled] = useState(true);
     const { register, handleSubmit, formState: { errors }, } = useForm({
-        // defaultValues: {
-        //     firstname: data.firstname,
-        //     lastname: data.lastname,
-        //     email: data.email,
-        //     phoneNumber: data.phoneNumber,
-        // },
+        defaultValues: {
+            firstname: data.firstname,
+            lastname: data.lastname,
+            email: data.email,
+            phoneNumber: data.phoneNumber,
+            userCity: data.userCity
+        },
+        mode: "onBlur",
         resolver: yupResolver(schema),
     });
 
     const normalizePhoneNumber = (value) => {
         const phoneNumber = parsePhoneNumberFromString(value)
-        const phoneNumberCountry = phoneNumber.country;
+        // const phoneNumberCountry = phoneNumber.country;
+        // && phoneNumberCountry !== 'SE'
 
-        if (!phoneNumber || phoneNumberCountry !== 'SE') {
-            console.log(phoneNumber)
-            console.log("incorrect phone number.")
+
+        if (!phoneNumber) {
+            console.log("incorrect phone number.", value)
             return value
         }
         console.log(phoneNumber)
@@ -68,7 +75,8 @@ const PersonalInforForm = () => {
         console.log(data)
         console.log(data.phoneNumber)
         sendDataToFireBase(data);
-        // setValues(data)
+        setValues(data)
+
     }
 
     function sendDataToFireBase(data) {
@@ -94,7 +102,8 @@ const PersonalInforForm = () => {
     return (
         <div className="form-control">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <label className="form-question" htmlFor="firstname">1: Let's get started! What's your first name?</label>
+                <label className="form-question" htmlFor="firstname">
+                    1: Let's get started! What's your first name?</label>
                 <input
                     type="text"
                     placeholder="First name"
@@ -102,7 +111,10 @@ const PersonalInforForm = () => {
                     {...register('firstname')}
                 />
                 {errors.firstname && <span className="invalid error-text">{errors.firstname.message}</span>}
-                <label className="form-question" htmlFor="firstname">2: And your last name?</label>
+
+                <label
+                    className="form-question" htmlFor="firstname">
+                    2: And your last name?</label>
                 <input
                     type="text"
                     label="And your last name?"
@@ -112,7 +124,8 @@ const PersonalInforForm = () => {
                 />
                 {errors.lastname && <span className="invalid error-text">{errors.lastname.message}</span>}
 
-                <label className="form-question" htmlFor="firstname">3: Thank for trusting us, test! We are going to help you! What is your email adress? </label>
+                <label className="form-question" htmlFor="firstname">
+                    3: Thank for trusting us, test! We are going to help you! What is your email adress? </label>
                 <input
                     type="email"
                     placeholder="email"
@@ -122,7 +135,8 @@ const PersonalInforForm = () => {
                 {errors.email && <span className="invalid error-text">{errors.email.message}</span>}
 
                 {/* We now need your telephone numbe */}
-                <label className="form-question" htmlFor="firstname">4: We now need your telephone number. </label>
+                <label className="form-question" htmlFor="firstname">
+                    4: We now need your telephone number. </label>
                 <input
                     type="tel"
                     placeholder="070 123 45 67"
@@ -132,6 +146,7 @@ const PersonalInforForm = () => {
                         event.target.value = normalizePhoneNumber(event.target.value);
                     }}
                 />
+                {errors.phoneNumber && <span className="invalid error-text">{errors.phoneNumber.message}</span>}
 
                 <label className="form-question" htmlFor="firstname">5: Where do you live? </label>
 
@@ -151,7 +166,6 @@ const PersonalInforForm = () => {
                         />
                     )
                 }
-
                 <input className="button"
                     type="submit"
                     placeholder="submit"
