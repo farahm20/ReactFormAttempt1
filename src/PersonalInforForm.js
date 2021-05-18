@@ -3,12 +3,11 @@ import { useData } from './DataContext';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { parsePhoneNumberFromString, parsePhoneNumber } from 'libphonenumber-js'
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import firebase from './firebase'
-
-
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
 //adding data to firebase
 // firebase.firestore().collection('UserAnswers').add({
@@ -19,7 +18,18 @@ import firebase from './firebase'
 //     userCity: 'Göteborg',
 // })
 
+//adding data to firebase
+// firebase.firestore().collection('ClientQuestions').add({
+//     id: 5,
+//     text: "Where do you live?",
+//     options: ["Stockholm", "Göteborg", "Malmo/Lund", "Uppsala", "Västerås", "Other"],
+//     questionType: 'oneline',
+//     answerFlag: false,
+// })
 
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+
+//schema for value parsing and validation
 const schema = yup.object().shape({
     firstname: yup.string()
         .required("First name is required")
@@ -31,8 +41,15 @@ const schema = yup.object().shape({
         .email("Email should have correct format")
         .required("Email is a required field"),
     phoneNumber: yup.string()
-        .required("Phone number is a required field"),
+        .required("Phone number is a required field")
+        .matches(phoneRegExp, 'Phone number is not valid.')
+        .min(10, "Phone number is short")
+        .max(15, "Phone number is too long"),
     userCity: yup.string()
+        .required("This is required."),
+    // citiesOptions: yup.boolean()
+    //     .required("At least on check box is required.")
+
 })
 
 const PersonalInforForm = () => {
@@ -50,19 +67,20 @@ const PersonalInforForm = () => {
         resolver: yupResolver(schema),
     });
 
+
+
     const normalizePhoneNumber = (value) => {
         const phoneNumber = parsePhoneNumberFromString(value)
-        // const phoneNumberCountry = phoneNumber.country;
-        // && phoneNumberCountry !== 'SE'
 
+        // const parsedPhoneNumber = parsePhoneNumber(value, 'SE')
+        // const parsedNumber = parsedPhoneNumber
+        // console.log('Parsed phone number: ', parsedNumber)
+        // console.log('Parsed validity: ', isValidPhoneNumber(value))
 
         if (!phoneNumber) {
             console.log("incorrect phone number.", value)
             return value
         }
-        console.log(phoneNumber)
-        console.log(phoneNumber.number)
-
         return (
             // phoneNumber.formatInternational()
             phoneNumber.formatNational()
@@ -164,8 +182,12 @@ const PersonalInforForm = () => {
                             }
                             label={city}
                         />
+
                     )
                 }
+                {errors.userCity && <span className="invalid error-text">{errors.userCity.message}</span>}
+                {/* {errors.citiesOptions && <span className="invalid error-text">{errors.citiesOptions.message}</span>} */}
+
                 <input className="button"
                     type="submit"
                     placeholder="submit"
