@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import firebase from '../firebase'
 import Question from './Question'
 
+//Picks questions from Firebase and shows them on screen. 
+
 function Render() {
     const [question, setQuestions] = useState([])
 
@@ -33,14 +35,8 @@ const RenderQuestions = () => {
                         <Question
                             key={question.id}
                             question={question} />
-                    )
-                        /* <li key={question.id}>
-                            <label className="form-question">{question.text}</label>
-                            <p>{question.questionType}</p>
-                            <p>{question.answerFlag}</p>
-                        </li> */
-
-                    )}
+                    ))
+                }
 
             </ol>
         </div>

@@ -20,10 +20,34 @@ import { isValidPhoneNumber } from 'react-phone-number-input';
 
 //adding data to firebase
 // firebase.firestore().collection('ClientQuestions').add({
-//     id: 5,
-//     text: "Where do you live?",
-//     options: ["Stockholm", "Göteborg", "Malmo/Lund", "Uppsala", "Västerås", "Other"],
-//     questionType: 'oneline',
+//     id: 23,
+//     text: "Do you believe it is important for your therapist to have their own professional website (and not only a Linkedin profile or similar)?",
+//     options: ["Yes, I think a professional website is important", "No, I don't think a professional website is important", "Other"],
+//     questionType: 'CheckboxQuestions',
+//     answerFlag: false,
+// })
+
+// firebase.firestore().collection('ClientQuestions').add({
+//     id: 21,
+//     text: "Before contacting us, how long had you been thinking about seeing a therapist?",
+//     options: ["Less than two months", "For about 1-2 months", "For about 2-6 months", "For about 6-12 months", "For about 12 months"],
+//     questionType: 'CheckboxQuestions',
+//     answerFlag: false,
+// })
+
+// firebase.firestore().collection('ClientQuestions').add({
+//     id: 24,
+//     text: "Is there anything you think we missed asking you in the form, in relation to your personal preferences and needs, to be able to match you correctly?",
+//     options: [],
+//     questionType: 'TextQuestions',
+//     answerFlag: false,
+// })
+
+// firebase.firestore().collection('ClientQuestions').add({
+//     id: 14,
+//     text: "How well do you think your therapist matches your preferences and needs - described in the form you completed?",
+//     options: ["1", "2", "3", "4", "5"],
+//     questionType: 'CheckboxQuestions',
 //     answerFlag: false,
 // })
 
