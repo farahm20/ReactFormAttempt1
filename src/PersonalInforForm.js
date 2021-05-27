@@ -35,13 +35,38 @@ import { isValidPhoneNumber } from 'react-phone-number-input';
 //     answerFlag: false,
 // })
 
-// firebase.firestore().collection('ClientQuestions').add({
-//     id: 24,
-//     text: "Is there anything you think we missed asking you in the form, in relation to your personal preferences and needs, to be able to match you correctly?",
+// firebase.firestore().collection('TestingQuestions').add(
+// {
+//     id: 2,
+//     text: "Your last name?",
 //     options: [],
 //     questionType: 'TextQuestions',
 //     answerFlag: false,
-// })
+//     type: "name"
+// }
+// {
+//     id: 3,
+//     text: "Your therapist name?",
+//     options: [],
+//     questionType: 'TextQuestions',
+//     answerFlag: false,
+//     type: "name"
+// }
+// {
+//     id: 4,
+//     text: "How well do you think your therapist matches your preferences and needs - described in the form you completed?",
+//     options: ["1", "2", "3", "4", "5"],
+//     questionType: 'CheckboxQuestions',
+//     answerFlag: false,
+// }
+// {
+//     id: 5,
+//     text: "Do you believe it is important for your therapist to have their own professional website (and not only a Linkedin profile or similar)?",
+//     options: ["Yes, I think a professional website is important", "No, I don't think a professional website is important", "Other"],
+//     questionType: 'CheckboxQuestions',
+//     answerFlag: false,
+// }
+// )
 
 // firebase.firestore().collection('ClientQuestions').add({
 //     id: 14,
