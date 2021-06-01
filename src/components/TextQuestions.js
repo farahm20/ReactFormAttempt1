@@ -1,80 +1,76 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { validateInput } from '../Validation/Validator';
+import React, { useState, useEffect } from 'react'
+import {
+    TextField,
+    MenuItem,
+    Button,
+    Input
+} from "@material-ui/core";
+import { useData } from '../DataContext';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 
+//schema for value parsing and validation
+const schema = yup.object().shape({
+    userInput: yup.string()
+        .required("Field is required")
+        .matches(/^([^0-9]*)$/, "Text field should not contain numbers")
+})
 
-const TextQuestions = ({ question, value, label, placeholder, validators, type, onChange }) => {
-    const questionTextLabel = question.text;
+const TextQuestionsTwo = ({ question, label, placeholder, validators, type }) => {
 
+    console.log("LABEL: ", label)
 
-    const [error, setError] = useState(false);
-    value = "";
-    const handleChange = (event) => {
-        console.log("In TextQuestions handleChange: ", value)
-        value = event.target;
-        setError(validateInput(validators, value));
-        onChange = (event.target.value);
+    const onSubmit = (data) => {
+        console.log(data)
+        setValues(data)
     }
 
+    const { setValues, data } = useData();
+
+    const { control, register, handleSubmit, setValue, formState: { errors }, } = useForm({
+        defaultValues: {
+            userInput: data.userInput,
+        },
+        mode: "onBlur",
+    });
+
+
+    const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
+        control, // control props comes from useForm (optional: if you are using FormContext)
+        name: "test", // unique name for your Field Array
+        // keyName: "id", default to "id", you can change the key name
+    });
+
+    useEffect(() => {
+        setValue("inputField", label)
+    }, []);
+
     return (
+
         <div>
-            <p> Single line questions</p>
-            {/* consition on label. only if the label is reveieved thean show label */}
-            {label && <label className="form-question" htmlFor="firstname">
-                {questionTextLabel}
-            </label>}
-            <input
-                type={type}
-                value={value}
-                className='form-control'
-                placeholder={placeholder}
-                onChange={onChange}
+            <form onSubmit={handleSubmit(onSubmit)}>
+                {/* {fields.map((field, index) => ( */}
+                <TextField
+                    key={label}
+                    name="inputField"
+                    type={type}
+                    className='form-control'
+                    placeholder={placeholder}
+                    {...register('userInput')}
+                    inputProps={{
+                        "aria-label": "Description"
+                    }}
+                />
+                {/* ))} */}
+            </form>
+        </div >
 
-
-            // onChange={(event) => {
-            //         event.target.value = normalizePhoneNumber(event.target.value);
-            />
-            {/* {
-                type === 'textarea' ? (
-                    <textarea
-                        className="form-comtrol"
-                        placeholder={placeholder}
-                        value={value}
-                        dafaultValue={value}
-                        onChange={handleChange}
-                    />
-                ) : (
-                    <input
-                        type={type}
-                        value={value}
-                        className='form-control'
-                        placeholder={placeholder}
-                        onChange={handleChange}
-                    />
-                )
-            } */}
-            { error && <span className='invalid error-text'>{error.message}</span>}
-
-        </div>
     )
+
+
 }
 
-TextQuestions.propTypes = {
-    value: PropTypes.string,
-    label: PropTypes.string,
-    placeholder: PropTypes.string,
-    validators: PropTypes.array,
-    type: PropTypes.string,
-    onChange: PropTypes.func.isRequired
-};
-
-TextQuestions.defaultProps = {
-    value: '',
-    label: '',
-    placeholder: '',
-    type: 'text',
-    validators: []
-};
-
-export default TextQuestions
+export default TextQuestionsTwo

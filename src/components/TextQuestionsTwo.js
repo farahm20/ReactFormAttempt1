@@ -1,60 +1,66 @@
-import React, { useState } from 'react'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import {
     TextField,
-    MenuItem,
-    Button,
-    Input
 } from "@material-ui/core";
 import { useData } from '../DataContext';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+
+const initialValues = {
+    answers: [
+        {
+            name: ""
+        }
+    ]
+};
 
 
-//schema for value parsing and validation
-const schema = yup.object().shape({
-    userInput: yup.string()
-        .required("Field is required")
-        .matches(/^([^0-9]*)$/, "Text field should not contain numbers")
-})
 
-const TextQuestionsTwo = ({ question, value, label, placeholder, validators, type, onChange }) => {
+const TextQuestionsTwo = () => {
 
-    const onSubmit = (data) => {
-        console.log(data)
-        setValues(data)
-    }
 
-    const { setValues, data } = useData();
-
-    const { register, handleSubmit, formState: { errors }, } = useForm({
-        defaultValues: {
-            userInput: data.userInput,
-        },
-        mode: "onBlur",
-        resolver: yupResolver(schema),
-    });
+    // const { setValues, data } = useData();
 
     return (
+
         <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <Input
-                    type="text"
-                    className='form-control'
-                    placeholder={placeholder}
-                    label={label}
-                    {...register('userInput')}
-
-                />
-                {errors.userInput && <span className="invalid error-text">{errors.userInput.message}</span>}
-            </form>
-        </div >
-    )
-
-
+            <Formik
+                initialValues={initialValues}
+                onSubmit={async (values) => {
+                    console.log(values);
+                }}
+            >
+                {({ values }) => (
+                    <Form>
+                        <FieldArray name="answers">
+                            {({ insert, remove, push }) => (
+                                <div>
+                                    {values.answers.length > 0 &&
+                                        values.answers.map((friend, index) => (
+                                            <div className="row" key={index}>
+                                                <div className="col">
+                                                    {/* <label htmlFor={`answers.${index}.name`}>Name</label> */}
+                                                    <Field
+                                                        name={`answers.${index}.name`}
+                                                        placeholder="Write here...."
+                                                        type="text"
+                                                    />
+                                                    <ErrorMessage
+                                                        name={`answers.${index}.name`}
+                                                        component="div"
+                                                        className="field-error"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                </div>
+                            )}
+                        </FieldArray>
+                    </Form>
+                )}
+            </Formik>
+        </div>
+    );
 }
-
-
 
 export default TextQuestionsTwo
