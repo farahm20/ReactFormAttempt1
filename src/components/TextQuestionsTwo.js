@@ -33,22 +33,22 @@ const TextQuestionsTwo = ({ label, placeholder, validators, type }) => {
                                 <div>
                                     {values.answers.length > 0 &&
                                         values.answers.map((answer, index) => (
-                                            <div className="row" key={index}>
-                                                <div className="col">
-                                                    <TextField
-                                                        id="filled-secondary"
-                                                        key={label}
-                                                        name={`answers.${index}.name`}
-                                                        placeholder="Write here...."
-                                                        type={type}
-                                                        className='form-control'
-                                                    />
-                                                    <ErrorMessage
-                                                        name={`answers.${index}.name`}
-                                                        component="div"
-                                                        className="field-error"
-                                                    />
-                                                </div>
+                                            <div className="form-control" key={index}>
+
+                                                <TextField
+                                                    id="filled-secondary"
+                                                    key={label}
+                                                    name={`answers.${index}.name`}
+                                                    placeholder="Write here...."
+                                                    type={type}
+                                                    className='form-control'
+                                                />
+                                                <ErrorMessage
+                                                    name={`answers.${index}.name`}
+                                                    component="div"
+                                                    className="field-error"
+                                                />
+
                                             </div>
                                         ))}
                                 </div>
